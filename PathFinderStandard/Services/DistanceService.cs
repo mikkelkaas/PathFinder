@@ -8,18 +8,18 @@ namespace PathFinderStandard.Services
 {
     public class DistanceService
     {
-        private readonly List<Checkpoint> _checkpoints;
+        public List<Checkpoint> Checkpoints { get; set; }
 
         private readonly Dictionary<Tuple<Checkpoint, Checkpoint>, double> _distances =
-            new Dictionary<Tuple<Checkpoint, Checkpoint>, double>();
+            new Dictionary<Tuple<Checkpoint, Checkpoint>, double>(new CheckpointEuqalityComparer());
 
         public int Calculations;
 
         public DistanceService(List<Checkpoint> checkpoints, Checkpoint homebase)
         {
             Homebase = homebase;
-            _checkpoints = checkpoints;
-            _checkpoints.Add(Homebase);
+            Checkpoints = checkpoints;
+            Checkpoints.Add(Homebase);
             foreach (var firstCheckpoint in checkpoints)
             foreach (var secondCheckpoint in checkpoints)
             {
@@ -57,7 +57,7 @@ namespace PathFinderStandard.Services
         {
 
             List<Checkpoint> cpsToUseForRoute = new List<Checkpoint> {Homebase};
-            cpsToUseForRoute.AddRange(_checkpoints.Where(cp => cp.IsHomeBase == false).OrderBy(x => Guid.NewGuid()).Take(length)
+            cpsToUseForRoute.AddRange(Checkpoints.Where(cp => cp.IsHomeBase == false).OrderBy(x => Guid.NewGuid()).Take(length)
                 .ToList());
             cpsToUseForRoute.Add(Homebase);
             double totalDistance = 0;
